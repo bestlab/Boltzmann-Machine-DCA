@@ -40,7 +40,7 @@ gsl_rng **rg_replica;
 
 int max_iter;
 int mc_steps;
-int nrep; 
+int nrep;
 double eps0_h;
 double eps0_J;
 double eps_inc;
@@ -55,7 +55,7 @@ double cutoff_freq;
 bool adaptive_stepsize_on;
 bool adaptive_sampling_on;
 bool symmetrize_on; 
-bool verbose; 
+bool verbose;
 double delta=0.2; //reweighting threshold
 long unsigned int myseed;
 
@@ -135,11 +135,33 @@ int main(int argc, char *argv[]){
 */
   model.convert_to_zero_sum();
 
+  if(model.N==2){
+    std::cout << "h:" << std::endl;
+    std::cout << model.h << std::endl;
+    std::cout << "J:" << std::endl;
+    std::cout << model.J << std::endl;
+  }
+
   //Run DCA
   fit(model,msa_freq,msa_corr,nrep);
 
+  if(model.N==2){
+    std::cout << "h:" << std::endl;
+    std::cout << model.h << std::endl;
+    std::cout << "J:" << std::endl;
+    std::cout << model.J << std::endl;
+  }
+
   //Ensure parameters are in zero-sum gauge
-  //model.convert_to_zero_sum();
+  model.convert_to_zero_sum();
+
+  if(model.N==2){
+    std::cout << "After zero-sum conversion:" << std::endl;
+    std::cout << "h:" << std::endl;
+    std::cout << model.h << std::endl;
+    std::cout << "J:" << std::endl;
+    std::cout << model.J << std::endl;
+  }
 
   //Print parameters to file
   print_params(model,output_dir+out_name);
@@ -222,7 +244,7 @@ void fit(model &mymodel, arma::mat &msa_freq, arma::cube &msa_corr, int nr){
       std::cout << "model 2p freq:" << std::endl;
       std::cout << mymodel.mom2 << std::endl;
     }
-    
+
     if(adaptive_sampling_on){
       if(diff1<mymodel.mom1_err && diff2<mymodel.mom2_err){
         std::cout << "Std. errors: " << mymodel.mom1_err << " " << mymodel.mom2_err << std::endl;
